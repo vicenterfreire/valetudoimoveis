@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Service;
@@ -54,10 +55,10 @@ final class AccountActionService
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
         $recipient = $isEmailChange ? (string) $requestedEmail : $user->getEmail();
-        $subject = $isEmailChange ? 'Confirme a alteração do e-mail — Casa & Costa' : 'Recuperação de senha — Casa & Costa';
+        $subject = $isEmailChange ? 'Confirme a alteração do e-mail — ValeTudo Imóveis' : 'Recuperação de senha — ValeTudo Imóveis';
         $body = $isEmailChange
-            ? "Foi solicitada a alteração do e-mail da sua conta Casa & Costa. Confirme o novo endereço acessando o link abaixo em até 1 hora:\n\n{$url}\n\nSe você não solicitou esta alteração, ignore esta mensagem."
-            : "Recebemos uma solicitação de redefinição de senha para sua conta Casa & Costa. Defina uma nova senha acessando o link abaixo em até 1 hora:\n\n{$url}\n\nSe você não solicitou esta alteração, ignore esta mensagem. Sua senha atual continuará válida.";
+            ? "Foi solicitada a alteração do e-mail da sua conta ValeTudo Imóveis. Confirme o novo endereço acessando o link abaixo em até 1 hora:\n\n{$url}\n\nSe você não solicitou esta alteração, ignore esta mensagem."
+            : "Recebemos uma solicitação de redefinição de senha para sua conta ValeTudo Imóveis. Defina uma nova senha acessando o link abaixo em até 1 hora:\n\n{$url}\n\nSe você não solicitou esta alteração, ignore esta mensagem. Sua senha atual continuará válida.";
 
         $from = $_SERVER['MAILER_FROM'] ?? $_ENV['MAILER_FROM'] ?? getenv('MAILER_FROM');
         if (!is_string($from) || !filter_var($from, FILTER_VALIDATE_EMAIL)) {

@@ -1,4 +1,4 @@
-# Plano de conclusão — Portal imobiliário Casa & Costa
+# Plano de conclusão — Portal imobiliário ValeTudo Imóveis
 
 > **Objetivo:** concluir as funcionalidades do catálogo público, do painel da imobiliária e do painel administrativo, preservando a experiência visual elegante, responsiva e intuitiva já estabelecida.
 >
@@ -16,16 +16,16 @@
 
 # 1. Diagnóstico geral
 
-| Área                  | Situação                  | Principais lacunas                                                             |
-| --------------------- | ------------------------- | ------------------------------------------------------------------------------ |
+| Área                  | Situação                                | Principais lacunas                                                                                              |
+| --------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | Catálogo público      | Implementado com refinamentos pendentes | Busca, paginação, ordenação, filtros de quartos/banheiros/vagas/área e preço; homologação visual ainda pendente |
-| Painel da imobiliária | Parcialmente implementado | Perfil público editável, organização de fotos, métricas e gestão de contatos   |
-| Painel administrativo | Parcialmente implementado | Aprovação de imobiliárias, usuários globais, moderação e relatórios            |
-| Destaques             | Pendente                  | Regras de destaque, expiração e exibição pública                               |
-| Planos e assinaturas  | Pendente/condicional      | Decisão sobre monetização, planos, pagamentos e limites                        |
-| Segurança             | Revisão necessária        | Contas inativas, isolamento de dados, uploads e autorização                    |
-| Interface             | Base existente            | Testes de responsividade, acessibilidade e consistência entre telas            |
-| Testes e deploy       | Não confirmados           | Suíte automatizada, migrations, validação do schema e estratégia de publicação |
+| Painel da imobiliária | Parcialmente implementado               | Perfil público editável, organização de fotos, métricas e gestão de contatos                                    |
+| Painel administrativo | Parcialmente implementado               | Aprovação de imobiliárias, usuários globais, moderação e relatórios                                             |
+| Destaques             | Pendente                                | Regras de destaque, expiração e exibição pública                                                                |
+| Planos e assinaturas  | Pendente/condicional                    | Decisão sobre monetização, planos, pagamentos e limites                                                         |
+| Segurança             | Revisão necessária                      | Contas inativas, isolamento de dados, uploads e autorização                                                     |
+| Interface             | Base existente                          | Testes de responsividade, acessibilidade e consistência entre telas                                             |
+| Testes e deploy       | Não confirmados                         | Suíte automatizada, migrations, validação do schema e estratégia de publicação                                  |
 
 ## Estratégia geral
 
@@ -487,7 +487,6 @@ Ordem recomendada:
 
 ---
 
-
 ## S5. Implantação por FTP e configuração de produção
 
 - [x] **P0 — Documentar variáveis obrigatórias de produção.** `.env` usa `APP_ENV=prod`/`APP_DEBUG=0` por padrão; `.env.prod.example` lista `APP_SECRET`, `DATABASE_URL`, `MAILER_DSN`, `MAILER_FROM` e `DEFAULT_URI` sem credenciais reais. `APP_SECRET` permanece vazio até ser configurado no host.
@@ -502,7 +501,6 @@ Ordem recomendada:
 - Nenhum segredo de produção está no ZIP versionado ou exposto por HTTP.
 - E-mails transacionais são entregues por um transporte real.
 - Rotas Symfony e proteção de uploads são verificadas no servidor contratado.
-
 
 # 6. Testes automatizados
 
@@ -631,7 +629,7 @@ O pacote analisado não permitiu confirmar a existência de uma suíte de testes
 
 Todas as implementações de interface devem seguir estas regras.
 
-- [ ] Preservar a identidade visual já estabelecida no Casa & Costa.
+- [ ] Preservar a identidade visual já estabelecida no ValeTudo Imóveis.
 - [ ] Reutilizar tipografia, cores, espaçamentos, cartões e padrões de botões existentes.
 - [ ] Reutilizar componentes para formulários, alertas, badges, tabelas e estados vazios.
 - [ ] Manter uma ação primária clara por tela.
@@ -733,7 +731,6 @@ O portal já possui uma base funcional relevante: catálogo público, detalhes d
 O caminho recomendado é **completar os fluxos existentes, reforçar segurança e persistência, cobrir as regras com testes e preservar a experiência visual atual**. Não é necessário reescrever tudo para alcançar os requisitos.
 
 A implementação de destaques e monetização deve depender das decisões comerciais. As funcionalidades centrais e a segurança devem ser concluídas antes dessas expansões.
-
 
 ## Atualização de implantação e onboarding (2026-10-24)
 

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block title %}{{ agency.name }} | Imobiliária em {{ agency.city }}/{{ agency.state }}{% endblock %}
-{% block meta_description %}{{ agency.description ? agency.description|striptags|trim|slice(0, 155) : 'Conheça os imóveis publicados por ' ~ agency.name ~ ' em ' ~ agency.city ~ '/' ~ agency.state ~ ' no Casa & Costa.' }}{% endblock %}
+{% block meta_description %}{{ agency.description ? agency.description|striptags|trim|slice(0, 155) : 'Conheça os imóveis publicados por ' ~ agency.name ~ ' em ' ~ agency.city ~ '/' ~ agency.state ~ ' no ValeTudo Imóveis.' }}{% endblock %}
 {% block canonical_url %}{{ url('agency_public_show', {slug: agency.slug}) }}{% endblock %}
-{% block og_title %}{{ agency.name }} | Casa & Costa{% endblock %}
+{% block og_title %}{{ agency.name }} | ValeTudo Imóveis{% endblock %}
 {% block og_description %}{{ agency.description ? agency.description|striptags|trim|slice(0, 200) : 'Imóveis de ' ~ agency.name ~ ' em ' ~ agency.city ~ '/' ~ agency.state ~ '.' }}{% endblock %}
 {% block og_image %}{% if agency.logoPath %}{{ absolute_url(asset(agency.logoPath)) }}{% endif %}{% endblock %}
 {% block body %}

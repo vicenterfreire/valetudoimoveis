@@ -149,7 +149,7 @@ final class UsageReportController extends AbstractController
             throw new \RuntimeException('Não foi possível preparar a exportação do relatório.');
         }
         fwrite($stream, "\xEF\xBB\xBF");
-        fputcsv($stream, ['Casa & Costa — Relatório de utilização']);
+        fputcsv($stream, ['ValeTudo Imóveis — Relatório de utilização']);
         fputcsv($stream, ['Período', $from, $to]);
         fputcsv($stream, ['Filtro de imobiliária', $this->safeCsvCell($agencyName)]);
         fputcsv($stream, []);

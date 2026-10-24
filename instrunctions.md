@@ -1,6 +1,6 @@
-# Instruções de desenvolvimento — Casa & Costa
+# Instruções de desenvolvimento — ValeTudo Imóveis
 
-Este documento reúne as regras de trabalho acordadas para evoluir o projeto Casa & Costa. Deve ser consultado antes de iniciar cada novo tópico do `planning.md`.
+Este documento reúne as regras de trabalho acordadas para evoluir o projeto ValeTudo Imóveis. Deve ser consultado antes de iniciar cada novo tópico do `planning.md`.
 
 ## 1. Trabalhar a partir do estado mais recente
 
@@ -100,6 +100,7 @@ Após implementar o tópico:
 ## 10. Princípio de conclusão
 
 Um tópico só pode ser considerado concluído quando:
+
 - a implementação real correspondente existe;
 - os requisitos e as verificações possíveis foram revisados;
 - o checklist reflete fielmente o estado do código;
@@ -126,14 +127,12 @@ Um tópico só pode ser considerado concluído quando:
 - Foram adicionados testes unitários para `UserChecker`, `AgencyAccess` e `UserManagementPolicy`, além de testes HTTP de acesso anônimo. Eles ainda não foram executados por decisão do usuário de priorizar a conclusão funcional e postergar testes automatizados; o pacote atual inclui `vendor/`, mas a suíte requer ambiente PHP compatível e banco de teste configurado.
 - Não marcar T1/T2 como concluídos até instalar dependências, executar os testes, corrigir falhas e complementar cobertura autenticada/CSRF. Consulte `docs/testing/automated-tests.md`.
 
-
 ## Atualização do ambiente de testes (2026-10-23)
 
 - O usuário forneceu `vendor.zip`, que foi extraído no projeto de trabalho. `php bin/console` inicia e o container Symfony pode ser validado.
 - Neste executor, `php bin/phpunit --testdox` ainda não inicia porque o PHP CLI não possui `dom`, `mbstring` e `xmlwriter`; também não há drivers PDO disponíveis.
 - Validações concluídas neste ambiente: container Symfony, 23 templates Twig, 24 arquivos YAML, mapeamento de 10 entidades e tabela de rotas. Isso não substitui a execução dos testes automatizados nem testes com banco.
 - Não marque T1/T2 como concluídos enquanto a suíte não rodar e os testes autenticados/CSRF não forem completados.
-
 
 ## Atualização — painel da imobiliária
 
@@ -144,25 +143,21 @@ Um tópico só pode ser considerado concluído quando:
 - O envio de fotos exibe progresso percentual por XHR. Validar fluxo e flash messages no navegador/hosting; testes automatizados foram adiados a pedido do usuário.
 - Antes de produção, revisar e aplicar a migration `Version20261023150000` em homologação com backup; para hosting FTP sem CLI, consultar `docs/operations/property-image-thumbnails.md`. Confirmar GD e formatos de imagem suportados no PHP da hospedagem.
 
-
 ## Atualização de continuidade — C1/C2 e paginação administrativa
 
 Ao continuar o projeto, preserve a paginação implementada nas listas globais de imobiliárias e usuários: 25 registros por página, contagem total e parâmetros de filtro preservados nos links. Os repositórios recebem `page` e `perPage`; não reintroduzir busca com limite fixo seguido de filtragem em memória. A consulta de papel usa `LIKE` sobre o token completo entre aspas no JSON `roles`, assumindo MySQL/MariaDB; valide-a no banco de homologação antes de produção.
 
 O painel administrativo foi considerado funcionalmente implementado na Fase 3, mas ainda não homologado. Notificações de status de imobiliárias e entrega de recuperação de senha não estão concluídas em ambiente real: `.env` usa `MAILER_DSN=null://null`, então configure `MAILER_DSN` e `MAILER_FROM` via ambiente da hospedagem e teste a entrega. Não marcar testes automatizados como executados; o usuário pediu para adiá-los e priorizar funcionalidades. Antes de produção, aplicar migrations em homologação após backup e fazer smoke tests manuais.
 
-
 ## Atualização de continuidade — paginação da moderação C3
 
 A listagem administrativa de imóveis usa paginação de 25 registros, com total de resultados e filtros preservados. `PropertyRepository::findForModeration()` não deve voltar a juntar a coleção `images` na consulta de listagem: a tabela não renderiza imagens, e o join poderia duplicar linhas SQL e prejudicar o limite por página. A página de revisão individual continua carregando as fotos e o histórico.
-
 
 ## Regras adicionais para onboarding e implantação
 
 - Ao criar o primeiro gestor de uma imobiliária, não enviar nem exibir senhas em texto claro. Usar senha aleatória inicial e link de definição de senha com token de uso único e expiração; proteger POST com CSRF, validar e-mail único e registrar auditoria sem dados sensíveis. A agência pendente/bloqueada nunca pode autenticar só porque o gestor já definiu a senha.
 - Para deploy FTP, manter `public/` como único document root público, não distribuir `.env.dev` nem segredos e documentar a configuração de `APP_ENV=prod`, `APP_DEBUG=0`, `APP_SECRET`, banco e SMTP. Arquivos `.env.*.example` são modelos, não configurações prontas.
 - Regras `.htaccess` não provam proteção efetiva de uploads: confirmar servidor, `mod_rewrite`, `AllowOverride` e testar no host. Para Nginx/IIS, documentar e solicitar regras equivalentes; não marcar o requisito como concluído sem validação real.
-
 
 ## Atualização de continuidade — primeiro gestor da imobiliária (2026-10-24)
 

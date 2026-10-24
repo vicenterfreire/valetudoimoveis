@@ -1,6 +1,6 @@
-# Casa & Costa — Guia de trabalho para agentes de IA
+# ValeTudo Imóveis — Guia de trabalho para agentes de IA
 
-Este arquivo orienta qualquer IA ou pessoa que continue o desenvolvimento do Casa & Costa. Leia-o antes de editar o projeto.
+Este arquivo orienta qualquer IA ou pessoa que continue o desenvolvimento do ValeTudo Imóveis. Leia-o antes de editar o projeto.
 
 ## Ordem de leitura obrigatória
 
@@ -85,7 +85,6 @@ Lote mais recente: refinamentos do **catálogo público** (filtros por área/ban
 
 O usuário pediu explicitamente para adiar os testes automatizados e priorizar a conclusão funcional até 2026-10-24. A sequência de trabalho atual deve seguir os painéis funcionais já definidos em `planning.md` (B1/B2 concluídos nesta entrega; prosseguir para painel administrativo e interface), sem marcar itens T1–T5 como aprovados. Antes de editar, releia `AGENTS.md`, `instrunctions.md`, `planning.md` e o código relacionado.
 
-
 ## Atualização — painel da imobiliária
 
 - O formulário de imóveis usa seções para informações, características, valores e localização, preservando os campos Symfony e seus erros de validação.
@@ -94,7 +93,6 @@ O usuário pediu explicitamente para adiar os testes automatizados e priorizar a
 - A rotina `app:uploads:purge-orphans` considera miniaturas e logos referenciados e mantém simulação como padrão.
 - O envio de fotos exibe progresso percentual por XHR. Validar fluxo e flash messages no navegador/hosting; testes automatizados foram adiados a pedido do usuário.
 - Antes de produção, revisar e aplicar a migration `Version20261023150000` em homologação com backup; para hosting FTP sem CLI, consultar `docs/operations/property-image-thumbnails.md`. Confirmar GD e formatos de imagem suportados no PHP da hospedagem.
-
 
 ## Atualização — painel administrativo C1/C2 (2026-10-23)
 
@@ -105,13 +103,11 @@ O usuário pediu explicitamente para adiar os testes automatizados e priorizar a
 - Notificações de aprovação/rejeição e entrega de recuperação de senha seguem pendentes até configurar `MAILER_DSN` e `MAILER_FROM` reais e validar entrega. Não declarar essas notificações como testadas.
 - A Fase 3 do planejamento foi marcada como funcionalmente implementada; isso não equivale a homologação ou prontidão de produção. Permanecem pendentes a configuração do mailer, aplicação deliberada das migrations e smoke tests na hospedagem.
 
-
 ## Atualização — paginação da moderação C3 (2026-10-23)
 
 - A fila administrativa de anúncios agora tem paginação de 25 registros, contagem total e links que preservam todos os filtros atuais.
 - `PropertyRepository::findForModeration()` e `countForModeration()` compartilham a mesma construção de filtros. A consulta da listagem não junta a coleção de imagens porque a tabela não exibe fotos; isso evita duplicação de linhas SQL e páginas incompletas quando um anúncio tem muitas fotos.
 - C4 (destaques editoriais) já oferece concessão/remoção com POST + CSRF, motivo, período máximo de 90 dias, elegibilidade e auditoria; a decisão comercial permanece gratuita/manual no MVP.
-
 
 ## Atualização — cadastro do primeiro gestor (2026-10-24)
 

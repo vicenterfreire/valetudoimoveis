@@ -104,7 +104,7 @@ final class AnalyticsController extends AbstractController
         }
 
         fwrite($stream, "\xEF\xBB\xBF");
-        fputcsv($stream, ['Casa & Costa — Relatório de métricas']);
+        fputcsv($stream, ['ValeTudo Imóveis — Relatório de métricas']);
         fputcsv($stream, ['Período', $from, $to]);
         fputcsv($stream, []);
         fputcsv($stream, ['Métrica', 'Quantidade']);

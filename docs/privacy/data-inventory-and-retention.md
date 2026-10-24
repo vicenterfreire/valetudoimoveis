@@ -1,4 +1,4 @@
-# Inventário de dados, auditoria e retenção — Casa & Costa
+# Inventário de dados, auditoria e retenção — ValeTudo Imóveis
 
 Revisão: 23/10/2026. Documento operacional do MVP; deve ser revisado pelo responsável pelo portal e assessoria jurídica antes da publicação definitiva. Não substitui análise jurídica de conformidade com a LGPD.
 

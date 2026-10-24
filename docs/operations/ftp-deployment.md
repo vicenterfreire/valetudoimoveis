@@ -1,4 +1,4 @@
-# Implantação por FTP — Casa & Costa
+# Implantação por FTP — ValeTudo Imóveis
 
 ## Antes do envio
 
