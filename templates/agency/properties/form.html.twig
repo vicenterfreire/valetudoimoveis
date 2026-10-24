@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ heading }}{% endblock %}
+{% block body %}
+<h1>{{ heading }}</h1>
+<div class="card">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <section class="form-section" aria-labelledby="property-basic-title">
+        <h2 id="property-basic-title">Informações do anúncio</h2>
+        <p class="muted">Apresente o imóvel com um título claro e uma descrição completa.</p>
+        <div class="form-row">{{ form_row(form.title) }}{{ form_row(form.slug) }}{{ form_row(form.description) }}</div>
+    </section>
+    <section class="form-section" aria-labelledby="property-characteristics-title">
+        <h2 id="property-characteristics-title">Características</h2>
+        <div class="form-row">{{ form_row(form.propertyType) }}{{ form_row(form.listingType) }}{{ form_row(form.areaM2) }}{{ form_row(form.bedrooms) }}{{ form_row(form.bathrooms) }}{{ form_row(form.parkingSpaces) }}</div>
+    </section>
+    <section class="form-section" aria-labelledby="property-pricing-title">
+        <h2 id="property-pricing-title">Valores</h2>
+        <div class="form-row">{{ form_row(form.price) }}{{ form_row(form.condoFee) }}{{ form_row(form.iptuAmount) }}</div>
+    </section>
+    <section class="form-section" aria-labelledby="property-location-title">
+        <h2 id="property-location-title">Localização</h2>
+        <p class="muted">O endereço exato não é exibido publicamente.</p>
+        <div class="form-row">{{ form_row(form.city) }}{{ form_row(form.state) }}{{ form_row(form.neighborhood) }}{{ form_row(form.street) }}{{ form_row(form.streetNumber) }}{{ form_row(form.zipCode) }}</div>
+    </section>
+    <p><button>Salvar imóvel</button> <a class="button secondary" href="{{ path('agency_properties_index') }}">Cancelar</a></p>
+    {{ form_end(form) }}
+</div>
+{% if property.id %}
+    <section class="card" style="margin-top:1rem">
+        <h2>Fotos do imóvel</h2>
+        <p class="muted">Envie arquivos JPG, PNG ou WEBP de até 8 MB cada. Selecione várias fotos de uma vez.</p>
+        <form id="property-image-upload" method="post" enctype="multipart/form-data" action="{{ path('agency_properties_images_upload', {id: property.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('property-images-' ~ property.id) }}">
+            <label for="property-images">Selecionar fotos</label>
+            <input id="property-images" type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required aria-describedby="property-images-help property-images-feedback">
+            <p id="property-images-help" class="muted">Até 10 fotos por envio, 8 MB por foto, 40 MB por lote e 30 fotos por imóvel.</p>
+            <ul id="property-images-preview" aria-live="polite"></ul>
+            <progress id="property-images-progress" max="100" value="0" hidden aria-label="Progresso do envio das fotos"></progress>
+            <p id="property-images-feedback" role="status" aria-live="polite"></p>
+            <p><button type="submit">Enviar fotos</button></p>
+        </form>
+        {% if property.images|length %}
+            <div class="grid">
+                {% for image in property.images %}
+                    <div class="card">
+                        <img class="property-image" src="{{ asset(image.thumbnailPath ?: image.filePath) }}" alt="{{ image.altText ?: property.title }}" loading="lazy">
+                        {% if loop.first %}<p class="status status-published">Foto de capa</p>{% else %}
+                            <form method="post" action="{{ path('agency_properties_images_cover', {id: property.id, imageId: image.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('cover-property-image-' ~ image.id) }}">
+                                <button class="secondary" type="submit">Definir como capa</button>
+                            </form>
+                        {% endif %}
+                        <div class="actions" aria-label="Ordenar foto">
+                            <form method="post" action="{{ path('agency_properties_images_reorder', {id: property.id, imageId: image.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('reorder-property-image-' ~ image.id) }}">
+                                <input type="hidden" name="direction" value="up">
+                                <button class="secondary" type="submit" {% if loop.first %}disabled{% endif %} aria-label="Mover foto {{ loop.index }} para cima">↑ Subir</button>
+                            </form>
+                            <form method="post" action="{{ path('agency_properties_images_reorder', {id: property.id, imageId: image.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('reorder-property-image-' ~ image.id) }}">
+                                <input type="hidden" name="direction" value="down">
+                                <button class="secondary" type="submit" {% if loop.last %}disabled{% endif %} aria-label="Mover foto {{ loop.index }} para baixo">↓ Descer</button>
+                            </form>
+                        </div>
+                        <form method="post" action="{{ path('agency_properties_images_alt', {id: property.id, imageId: image.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('alt-property-image-' ~ image.id) }}">
+                            <label for="image-alt-{{ image.id }}">Texto alternativo da foto</label>
+                            <input id="image-alt-{{ image.id }}" name="altText" type="text" maxlength="180" value="{{ image.altText }}" placeholder="Descreva o que aparece na foto">
+                            <button class="secondary" type="submit">Salvar descrição acessível</button>
+                        </form>
+                        <form method="post" action="{{ path('agency_properties_images_delete', {id: property.id, imageId: image.id}) }}" onsubmit="return confirm('Remover esta foto?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-property-image-' ~ image.id) }}">
+                            <button class="danger">Remover foto</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">Nenhuma foto adicionada.</p>
+        {% endif %}
+    </section>
+    <script>
+    (() => {
+        const form = document.getElementById('property-image-upload');
+        const input = document.getElementById('property-images');
+        const preview = document.getElementById('property-images-preview');
+        const feedback = document.getElementById('property-images-feedback');
+        if (!form || !input || !preview || !feedback) return;
+        const maxFiles = 10;
+        const maxFileBytes = 8 * 1024 * 1024;
+        const maxBatchBytes = 40 * 1024 * 1024;
+        const progress = document.getElementById('property-images-progress');
+        input.addEventListener('change', () => {
+            preview.replaceChildren();
+            feedback.textContent = '';
+            const files = Array.from(input.files || []);
+            const total = files.reduce((sum, file) => sum + file.size, 0);
+            for (const file of files) {
+                const item = document.createElement('li');
+                item.textContent = `${file.name} — ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+                if (file.size > maxFileBytes) item.textContent += ' — excede 8 MB';
+                preview.appendChild(item);
+            }
+            if (files.length > maxFiles) feedback.textContent = 'Selecione no máximo 10 fotos por envio.';
+            else if (total > maxBatchBytes) feedback.textContent = 'O lote selecionado excede 40 MB.';
+            else if (files.some(file => file.size > maxFileBytes)) feedback.textContent = 'Uma ou mais fotos excedem 8 MB.';
+            else if (files.length) feedback.textContent = `${files.length} arquivo(s) selecionado(s).`;
+        });
+        form.addEventListener('submit', event => {
+            const files = Array.from(input.files || []);
+            const total = files.reduce((sum, file) => sum + file.size, 0);
+            if (!files.length || files.length > maxFiles || total > maxBatchBytes || files.some(file => file.size > maxFileBytes)) {
+                event.preventDefault();
+                feedback.textContent = 'Revise a seleção: até 10 fotos, 8 MB por arquivo e 40 MB por envio.';
+                input.focus();
+                return;
+            }
+            if (!window.XMLHttpRequest || !progress) return;
+            event.preventDefault();
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = true;
+            progress.hidden = false;
+            progress.value = 0;
+            feedback.textContent = 'Enviando fotos: 0%';
+            const request = new XMLHttpRequest();
+            request.open('POST', form.action);
+            request.upload.addEventListener('progress', uploadEvent => {
+                if (!uploadEvent.lengthComputable) return;
+                progress.value = Math.round(uploadEvent.loaded / uploadEvent.total * 100);
+                feedback.textContent = `Enviando fotos: ${progress.value}%`;
+            });
+            request.addEventListener('load', () => {
+                if (request.status >= 200 && request.status < 400) {
+                    progress.value = 100;
+                    feedback.textContent = 'Envio processado. Atualizando a galeria…';
+                    window.location.reload();
+                    return;
+                }
+                feedback.textContent = 'Não foi possível concluir o envio. Confira os arquivos e tente novamente.';
+                if (submitButton) submitButton.disabled = false;
+            });
+            request.addEventListener('error', () => {
+                feedback.textContent = 'Falha de conexão durante o envio. Verifique a conexão e tente novamente.';
+                if (submitButton) submitButton.disabled = false;
+            });
+            request.send(new FormData(form));
+        });
+    })();
+    </script>
+{% endif %}
+{% endblock %}

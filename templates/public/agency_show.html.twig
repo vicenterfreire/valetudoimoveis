@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ agency.name }} | Imobiliária em {{ agency.city }}/{{ agency.state }}{% endblock %}
+{% block meta_description %}{{ agency.description ? agency.description|striptags|trim|slice(0, 155) : 'Conheça os imóveis publicados por ' ~ agency.name ~ ' em ' ~ agency.city ~ '/' ~ agency.state ~ ' no Casa & Costa.' }}{% endblock %}
+{% block canonical_url %}{{ url('agency_public_show', {slug: agency.slug}) }}{% endblock %}
+{% block og_title %}{{ agency.name }} | Casa & Costa{% endblock %}
+{% block og_description %}{{ agency.description ? agency.description|striptags|trim|slice(0, 200) : 'Imóveis de ' ~ agency.name ~ ' em ' ~ agency.city ~ '/' ~ agency.state ~ '.' }}{% endblock %}
+{% block og_image %}{% if agency.logoPath %}{{ absolute_url(asset(agency.logoPath)) }}{% endif %}{% endblock %}
+{% block body %}
+<section class="agency-hero">
+    <div class="agency-identity">
+        {% if agency.logoPath %}
+            <img class="agency-public-logo" src="{{ asset(agency.logoPath) }}" alt="Logo de {{ agency.name }}">
+        {% else %}
+            <div class="agency-public-logo agency-public-logo-fallback" aria-hidden="true">{{ agency.name|slice(0, 1)|upper }}</div>
+        {% endif %}
+        <div><span class="eyebrow">Imobiliária parceira</span><h1>{{ agency.name }}</h1><p class="agency-location">{{ agency.city }}/{{ agency.state }}</p></div>
+    </div>
+    {% if agency.description %}<div class="agency-description">{{ agency.description|nl2br }}</div>{% endif %}
+    <div class="agency-contact-list" aria-label="Informações públicas de contato">
+        {% if publicEmail %}<a class="button secondary" href="mailto:{{ publicEmail }}">✉ {{ publicEmail }}</a>{% endif %}
+        {% if agency.phone %}<span class="agency-contact-item">Telefone: {{ agency.phone }}</span>{% endif %}
+        {% if whatsappNumber %}<a class="button" href="https://wa.me/{{ whatsappNumber }}" target="_blank" rel="noopener noreferrer">Conversar pelo WhatsApp ↗</a>{% endif %}
+        {% if website %}<a class="button secondary" href="{{ website }}" target="_blank" rel="noopener noreferrer">Visitar site ↗</a>{% endif %}
+    </div>
+</section>
+
+<div class="section-heading">
+    <div><span class="eyebrow">Oportunidades disponíveis</span><h2>Imóveis anunciados</h2><p class="muted">{{ properties|length }} {{ properties|length == 1 ? 'imóvel publicado' : 'imóveis publicados' }}</p></div>
+</div>
+{% if properties is not empty %}
+    <div class="grid property-grid">
+        {% for property in properties %}
+            <article class="card property-card">
+                {% set cover = property.images|first %}
+                {% if cover %}
+                    <img class="property-image" src="{{ asset(cover.thumbnailPath ?: cover.filePath) }}" alt="{{ cover.altText ?: property.title }}" loading="lazy" decoding="async" data-image-fallback>
+                {% else %}
+                    <div class="property-image image-placeholder" role="img" aria-label="Foto não disponível"><span>Foto não disponível</span></div>
+                {% endif %}
+                <div class="property-card-content">
+                    <p class="property-location">{{ property.neighborhood ? property.neighborhood ~ ' · ' : '' }}{{ property.city }}/{{ property.state }}</p>
+                    <h3><a href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a></h3>
+                    <p class="price">R$ {{ property.price|number_format(2, ',', '.') }}</p>
+                    <p class="property-meta">{{ property.listingType.label }} · {{ property.propertyType.label }}</p>
+                    <a class="button property-details-link" href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">Ver detalhes</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="card empty-state"><h2>Nenhum imóvel publicado no momento</h2><p>Esta imobiliária ainda não possui anúncios disponíveis. Volte em breve para conferir as novidades.</p><a class="button secondary" href="{{ path('home') }}">Explorar todos os imóveis</a></section>
+{% endif %}
+{% endblock %}

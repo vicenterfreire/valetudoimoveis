@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% block title %}Moderação de imóveis | Casa & Costa{% endblock %}
+{% block body %}
+<div class="page-heading"><div><span class="eyebrow">Administração global</span><h1>Moderação de imóveis</h1><p class="muted">Revise anúncios sem confundir a decisão editorial com a disponibilidade comercial.</p></div></div>
+<form method="get" class="toolbar" aria-label="Filtros de moderação">
+<div class="field"><label for="property-q">Título ou imobiliária</label><input id="property-q" name="q" type="search" maxlength="100" value="{{ query }}"></div>
+<div class="field"><label for="property-city">Cidade</label><input id="property-city" name="city" maxlength="100" value="{{ city }}"></div>
+<div class="field"><label for="property-agency">Imobiliária</label><select id="property-agency" name="agency"><option value="">Todas</option>{% for agency in agencies %}<option value="{{ agency.id }}" {{ selectedAgency == agency.id ? 'selected' : '' }}>{{ agency.name }}</option>{% endfor %}</select></div>
+<div class="field"><label for="property-moderation">Moderação</label><select id="property-moderation" name="moderation"><option value="">Todos</option>{% for option in moderationStatuses %}<option value="{{ option.value }}" {{ selectedModeration == option.value ? 'selected' : '' }}>{{ option.label }}</option>{% endfor %}</select></div>
+<div class="field"><label for="property-commercial">Status comercial</label><select id="property-commercial" name="commercial"><option value="">Todos</option>{% for option in commercialStatuses %}<option value="{{ option.value }}" {{ selectedCommercial == option.value ? 'selected' : '' }}>{{ option.value }}</option>{% endfor %}</select></div>
+<div class="field"><label for="property-type">Tipo</label><select id="property-type" name="type"><option value="">Todos</option>{% for option in types %}<option value="{{ option.value }}" {{ selectedType == option.value ? 'selected' : '' }}>{{ option.label }}</option>{% endfor %}</select></div>
+<div class="field"><label for="property-from">Cadastrado a partir de</label><input id="property-from" type="date" name="from" value="{{ from }}"></div>
+<div class="field"><label for="property-to">Cadastrado até</label><input id="property-to" type="date" name="to" value="{{ to }}"></div>
+<input type="hidden" name="page" value="1"><button type="submit">Filtrar</button><a class="button secondary" href="{{ path('admin_properties_index') }}">Limpar</a>
+</form>
+<p class="muted">A lista é paginada em grupos de 25 anúncios. Para abrir fotos, descrição e histórico, entre na revisão do anúncio.</p>
+<div class="table-wrap" role="region" aria-label="Anúncios para moderação; deslize horizontalmente em telas estreitas" tabindex="0"><table><thead><tr><th>Imóvel</th><th>Imobiliária</th><th>Local</th><th>Moderação</th><th>Status comercial</th><th>Atualizado</th><th>Ação</th></tr></thead><tbody>
+{% for property in properties %}<tr>
+<td><strong>{{ property.title }}</strong><br><small class="muted">{{ property.listingType.label }} · {{ property.propertyType.label }}</small></td><td>{{ property.agency.name }}</td><td>{{ property.city }}/{{ property.state }}</td><td>{{ property.moderationStatus.label }}</td><td>{{ property.status.value }}</td><td>{{ property.updatedAt|date('d/m/Y H:i') }}</td><td><a class="button secondary" href="{{ path('admin_properties_show', {id: property.id}) }}">Revisar anúncio</a></td>
+</tr>{% else %}<tr><td colspan="7">Nenhum imóvel corresponde aos filtros.</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="pagination-summary" aria-live="polite">
+    <p class="muted">{{ totalItems }} anúncio(s) encontrado(s) · Página {{ page }} de {{ totalPages }}</p>
+    {% if totalPages > 1 %}
+        <nav class="pagination" aria-label="Paginação de anúncios">
+            {% if page > 1 %}<a class="button secondary" href="{{ path('admin_properties_index', {q: query, city: city, agency: selectedAgency, moderation: selectedModeration, commercial: selectedCommercial, type: selectedType, from: from, to: to, page: page - 1}) }}" rel="prev">Anterior</a>{% endif %}
+            {% for pageNumber in max(1, page - 2)..min(totalPages, page + 2) %}
+                {% if pageNumber == page %}<span class="button" aria-current="page">{{ pageNumber }}</span>{% else %}<a class="button secondary" href="{{ path('admin_properties_index', {q: query, city: city, agency: selectedAgency, moderation: selectedModeration, commercial: selectedCommercial, type: selectedType, from: from, to: to, page: pageNumber}) }}">{{ pageNumber }}</a>{% endif %}
+            {% endfor %}
+            {% if page < totalPages %}<a class="button secondary" href="{{ path('admin_properties_index', {q: query, city: city, agency: selectedAgency, moderation: selectedModeration, commercial: selectedCommercial, type: selectedType, from: from, to: to, page: page + 1}) }}" rel="next">Próxima</a>{% endif %}
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

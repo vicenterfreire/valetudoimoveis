@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Privacidade | Casa & Costa{% endblock %}
+
+{% block body %}
+<section class="page-heading">
+  <div><p class="eyebrow">TRANSPARÊNCIA</p><h1>Privacidade e uso de dados</h1><p class="muted">Informações sobre os dados usados pelo Casa &amp; Costa e como gerenciar as métricas opcionais.</p></div>
+</section>
+<div class="card privacy-document">
+  <p><strong>Última revisão:</strong> 23 de outubro de 2026.</p>
+  <h2>Dados de cadastro e anúncios</h2>
+  <p>Para operar o catálogo e os painéis, o portal trata dados de cadastro fornecidos por usuários e imobiliárias, informações dos imóveis, imagens, permissões e registros necessários à segurança e à moderação. Esses dados são usados para administrar contas, exibir anúncios autorizados e prevenir abuso.</p>
+  <h2>Contato com imobiliárias</h2>
+  <p>Quando você escolhe entrar em contato, o portal pode redirecionar você ao WhatsApp da imobiliária. O portal não mantém uma caixa de mensagens nem armazena o conteúdo da conversa do WhatsApp. Não inclua dados sensíveis desnecessários em mensagens.</p>
+  <h2>Métricas opcionais</h2>
+  <p>Com sua autorização, registramos contagens agregadas de visualizações de anúncios e cliques para contato, associadas ao imóvel e à imobiliária. Não registramos endereço IP, identificadores de publicidade, impressão digital do navegador nem o conteúdo das mensagens. A sessão é usada para evitar contar repetidamente o mesmo tipo de evento no mesmo anúncio durante 30 minutos.</p>
+  <p>A política de retenção dos eventos analíticos é de 365 dias. A exclusão efetiva depende da execução periódica do comando de limpeza no ambiente de hospedagem; até que esse agendamento seja configurado e verificado, não é possível garantir a remoção automática no prazo. A escolha de métricas opcionais fica guardada na sessão atual; ao encerrar a sessão, poderá ser solicitada novamente.</p>
+  <h2>Registros de segurança e auditoria</h2>
+  <p>Operações administrativas relevantes podem gerar registros com a ação realizada, referências internas de usuário, imobiliária ou imóvel e metadados limitados. Esses registros não devem conter senhas, tokens de acesso, mensagens privadas ou conteúdo completo de formulários. São usados para investigar alterações e proteger contas.</p>
+  <h2>Arquivos e segurança</h2>
+  <p>As imagens de anúncios e logos são verificadas e convertidas para formatos de imagem suportados antes de serem disponibilizadas. O acesso aos recursos de gerenciamento exige autenticação, autorização e proteção contra requisições forjadas. O provedor de hospedagem ainda pode ter seus próprios registros técnicos, sujeitos à configuração e à política contratual dele.</p>
+  <h2>Seus direitos e contato</h2>
+  <p>Para solicitar acesso, correção ou exclusão de dados pessoais, entre em contato com a imobiliária responsável pelos dados do anúncio ou com o administrador do portal por um canal de contato publicado no site. Os pedidos devem ser avaliados conforme as obrigações legais e a necessidade de manter registros de segurança.</p>
+  <h2>Gerenciar preferência de métricas</h2>
+  <p>Você pode permitir ou recusar as métricas opcionais nesta sessão. A recusa não impede a navegação no catálogo nem o contato com imobiliárias.</p>
+  <div class="actions">
+    <form method="post" action="{{ path('privacy_consent') }}"><input type="hidden" name="_token" value="{{ csrf_token('privacy-analytics-consent') }}"><input type="hidden" name="choice" value="accept"><button type="submit">Permitir métricas opcionais</button></form>
+    <form method="post" action="{{ path('privacy_consent') }}"><input type="hidden" name="_token" value="{{ csrf_token('privacy-analytics-consent') }}"><input type="hidden" name="choice" value="reject"><button type="submit" class="button button-secondary">Recusar métricas opcionais</button></form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block title %}Imóveis{% endblock %}
+{% block body %}
+<div class="page-heading"><div><span class="eyebrow">Seu portfólio</span><h1>Imóveis</h1><p class="muted">Gerencie anúncios, atualize informações e controle a disponibilidade.</p></div><a class="button" href="{{ path('agency_properties_new') }}">Novo imóvel</a></div>
+<form method="get"><label for="property-search">Buscar por título</label><input id="property-search" name="q" value="{{ query }}"><button>Buscar</button></form>
+<div class="table-wrap" role="region" aria-label="Tabela de imóveis da imobiliária. Em telas estreitas, deslize horizontalmente para ver todas as colunas." tabindex="0"><table>
+    <thead><tr><th>Título</th><th>Status comercial</th><th>Moderação</th><th>Finalidade</th><th>Preço</th><th>Ações</th></tr></thead>
+    <tbody>
+    {% for p in properties %}
+        <tr>
+            <td>{{ p.title }}<br><small class="muted">{{ p.city }}/{{ p.state }} · {{ p.images|length }} foto(s)</small></td>
+            <td>{% if p.status.value == 'draft' %}Rascunho{% elseif p.status.value == 'published' %}Publicado{% elseif p.status.value == 'paused' %}Pausado{% elseif p.status.value == 'sold' %}Vendido{% elseif p.status.value == 'rented' %}Alugado{% else %}Arquivado{% endif %}</td>
+            <td><strong>{{ p.moderationStatus.label }}</strong>
+                {% if moderationHistory[p.id] is defined and moderationHistory[p.id].reason %}<details><summary>Ver motivo / orientação</summary><p>{{ moderationHistory[p.id].reason }}</p><small class="muted">{{ moderationHistory[p.id].createdAt|date('d/m/Y H:i') }}</small></details>{% endif %}
+                {% if p.moderationStatus.value in ['rejected', 'changes_requested'] %}<form class="inline" method="post" action="{{ path('agency_properties_request_review', {id: p.id}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-review-' ~ p.id) }}"><button class="secondary" type="submit">Solicitar nova análise</button></form>{% endif %}
+            </td>
+            <td>{{ p.listingType.label }}</td>
+            <td>R$ {{ p.price|number_format(2, ',', '.') }}</td>
+            <td>
+                <div class="actions"><a href="{{ path('agency_properties_edit', {id: p.id}) }}">Editar</a>
+                {% if p.status.value != 'published' and p.status.value not in ['archived', 'sold', 'rented'] and p.moderationStatus.value == 'approved' %}
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'published'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><button>Publicar</button></form>
+                {% elseif p.status.value != 'published' and p.status.value not in ['archived', 'sold', 'rented'] %}<span class="muted">Aguardando aprovação</span>
+                {% elseif p.status.value == 'published' %}
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'paused'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><button class="secondary">Pausar</button></form>
+                {% elseif p.status.value == 'paused' and p.moderationStatus.value == 'approved' %}
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'published'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><button>Publicar</button></form>
+                {% elseif p.status.value == 'paused' %}<span class="muted">Aguardando aprovação</span>
+                {% endif %}
+                {% if p.status.value not in ['archived', 'sold', 'rented'] %}
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'sold'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><button class="secondary">Marcar vendido</button></form>
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'rented'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><button class="secondary">Marcar alugado</button></form>
+                {% endif %}
+                {% if is_granted('ROLE_AGENCY_MANAGER') and p.status.value != 'archived' %}
+                    <form class="inline" method="post" action="{{ path('agency_properties_status', {id: p.id, status: 'archived'}) }}"><input type="hidden" name="_token" value="{{ csrf_token('property-status-' ~ p.id) }}"><label class="visually-hidden" for="archive-reason-{{ p.id }}">Motivo do arquivamento de {{ p.title }}</label><input id="archive-reason-{{ p.id }}" name="reason" placeholder="Motivo do arquivamento" maxlength="1000" required><button class="danger">Arquivar</button></form>
+                {% endif %}</div>
+            </td>
+        </tr>
+    {% else %}<tr><td colspan="6">Nenhum imóvel encontrado.</td></tr>{% endfor %}
+    </tbody>
+</table></div>
+{% endblock %}

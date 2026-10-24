@@ -1,3 +1,20 @@
 body {
     background-color: skyblue;
 }
+
+
+/* Property editor sections and accessible upload progress. */
+.form-section { margin-block: 1.25rem; padding: 1rem; border: 1px solid rgba(30, 64, 75, .18); border-radius: 14px; background: rgba(255, 255, 255, .72); }
+.form-section h2 { margin-top: 0; font-size: 1.15rem; }
+.form-section .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1rem; }
+.form-section .form-row > div { min-width: 0; }
+.form-section textarea { min-height: 9rem; }
+#property-images-progress { display: block; width: 100%; min-height: .7rem; margin-block: .75rem; }
+#property-images-progress[hidden] { display: none; }
+@media (max-width: 640px) { .form-section { padding: .8rem; } }
+
+/* Admin list pagination: wraps naturally on narrow screens. */
+.pagination-summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; margin-block: 1rem 2rem; }
+.pagination-summary p { margin: 0; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.pagination [aria-current="page"] { cursor: default; }

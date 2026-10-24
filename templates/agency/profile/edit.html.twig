@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Perfil público da imobiliária{% endblock %}
+{% block meta_description %}Gerencie as informações públicas, os contatos e a identidade visual da sua imobiliária no Casa & Costa.{% endblock %}
+{% block body %}
+<div class="page-heading">
+    <div><span class="eyebrow">Sua imobiliária</span><h1>Perfil público</h1><p>Estas informações ajudam clientes a conhecer sua imobiliária e entrar em contato.</p></div>
+    <a class="button secondary" href="{{ path('agency_public_show', {slug: agency.slug}) }}" target="_blank" rel="noopener">Visualizar perfil ↗</a>
+</div>
+
+<div class="profile-layout">
+    <section class="card profile-editor">
+        <h2>Informações da imobiliária</h2>
+        <p class="muted">O nome também é usado para criar o endereço público. O endereço pode mudar quando o nome mudar.</p>
+        {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <div class="form-row">
+                <div>{{ form_row(form.name) }}</div>
+                <div>{{ form_row(form.city) }}</div>
+                <div>{{ form_row(form.state) }}</div>
+                <div>{{ form_row(form.email) }}</div>
+                <div>{{ form_row(form.phone) }}</div>
+                <div>{{ form_row(form.whatsapp) }}</div>
+                <div class="profile-wide">{{ form_row(form.website) }}</div>
+                <div class="profile-wide">{{ form_row(form.description) }}</div>
+            </div>
+            <div class="form-actions"><button type="submit">Salvar perfil</button><a class="button secondary" href="{{ path('dashboard') }}">Voltar ao painel</a></div>
+        {{ form_end(form) }}
+    </section>
+
+    <aside class="card profile-logo-card">
+        <span class="eyebrow">Identidade visual</span>
+        <h2>Logo da imobiliária</h2>
+        <p class="muted">Use uma imagem nítida, de até 5 MB. O arquivo é validado e convertido para PNG antes de ser publicado.</p>
+        {% if agency.logoPath %}
+            <div class="agency-logo-preview"><img src="{{ asset(agency.logoPath) }}" alt="Logo atual de {{ agency.name }}"></div>
+        {% else %}
+            <div class="agency-logo-preview agency-logo-empty"><span aria-hidden="true">C</span><small>Nenhum logo cadastrado</small></div>
+        {% endif %}
+        <form method="post" action="{{ path('agency_profile_logo') }}" enctype="multipart/form-data">
+            <input type="hidden" name="_token" value="{{ csrf_token('agency-logo-' ~ agency.id) }}">
+            <input type="hidden" name="action" value="upload">
+            <label for="agency-logo">Selecionar imagem</label>
+            <input id="agency-logo" type="file" name="logo" accept="image/jpeg,image/png,image/webp" required>
+            <p class="muted">Formatos aceitos: JPEG, PNG e WebP.</p>
+            <button type="submit">Enviar logo</button>
+        </form>
+        {% if agency.logoPath %}
+            <form method="post" action="{{ path('agency_profile_logo') }}" class="form-actions" onsubmit="return confirm('Deseja remover o logo do perfil?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('agency-logo-' ~ agency.id) }}">
+                <input type="hidden" name="action" value="remove">
+                <button class="danger" type="submit">Remover logo</button>
+            </form>
+        {% endif %}
+        <div class="privacy-note"><strong>Dados privados</strong><p>O CNPJ/documento, os dados dos funcionários e as informações internas da conta não aparecem no perfil público.</p></div>
+    </aside>
+</div>
+{% endblock %}

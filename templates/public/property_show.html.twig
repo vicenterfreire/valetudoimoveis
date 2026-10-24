@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ property.title }}{% endblock %}
+{% block meta_description %}{{ property.description|striptags|slice(0, 155) }}{% endblock %}
+{% block canonical_url %}{{ url('property_show', {id: property.id, slug: property.slug}) }}{% endblock %}
+{% block og_title %}{{ property.title }} | Casa & Costa{% endblock %}
+{% block og_description %}{{ property.description|striptags|slice(0, 155) }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_image %}{% if property.images|length > 0 %}{% set ogCover = property.images|first %}{{ absolute_url(asset(ogCover.filePath)) }}{% endif %}{% endblock %}
+{% block body %}
+<div class="page-heading">
+    <div>
+        <a href="{{ path('home') }}">← Voltar aos imóveis</a>
+        <h1 style="margin-top:16px">{{ property.title }}</h1>
+        <p class="muted">{{ property.neighborhood ? property.neighborhood ~ ' · ' : '' }}{{ property.city }}/{{ property.state }}</p>
+        <p class="price">R$ {{ property.price|number_format(2, ',', '.') }} · {{ property.listingType.label }}</p>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <div>
+        <section class="card detail-gallery-section" aria-label="Galeria de fotos do imóvel">
+            {% if property.images|length > 0 %}
+                {% set cover = property.images|first %}
+                <div class="detail-gallery-main">
+                    <img id="property-gallery-main-{{ property.id }}" class="property-image" src="{{ asset(cover.filePath) }}" alt="{{ cover.altText ?: property.title }}" decoding="async" data-image-fallback>
+                </div>
+                {% if property.images|length > 1 %}
+                    <div class="detail-gallery-thumbnails" aria-label="Escolher foto para visualizar">
+                        {% for image in property.images %}
+                            <button type="button" class="detail-gallery-thumb{{ loop.first ? ' is-selected' : '' }}" data-gallery-thumb data-gallery-target="property-gallery-main-{{ property.id }}" data-gallery-src="{{ asset(image.filePath) }}" data-gallery-alt="{{ image.altText ?: property.title }}" aria-pressed="{{ loop.first ? 'true' : 'false' }}" aria-label="Exibir foto {{ loop.index }} de {{ property.images|length }}">
+                                <img src="{{ asset(image.thumbnailPath ?: image.filePath) }}" alt="" loading="lazy" decoding="async" data-image-fallback>
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="property-image image-placeholder" role="img" aria-label="Foto não disponível"><span>Foto não disponível</span></div>
+            {% endif %}
+        </section>
+
+        <section class="card description-card">
+            <h2>Sobre o imóvel</h2>
+            <p>{{ property.description|nl2br }}</p>
+            <div class="detail-specs">
+                <div class="spec"><strong>{{ property.areaM2 ? property.areaM2|number_format(2, ',', '.') ~ ' m²' : '—' }}</strong><span>Área</span></div>
+                <div class="spec"><strong>{{ property.bedrooms ?? '—' }}</strong><span>Quartos</span></div>
+                <div class="spec"><strong>{{ property.bathrooms ?? '—' }}</strong><span>Banheiros</span></div>
+                <div class="spec"><strong>{{ property.parkingSpaces ?? '—' }}</strong><span>Vagas</span></div>
+            </div>
+            {% if property.condoFee is not null or property.iptuAmount is not null %}
+                <h3>Custos adicionais</h3>
+                <dl class="property-costs">
+                    {% if property.condoFee is not null %}
+                        <div><dt>Condomínio</dt><dd>R$ {{ property.condoFee|number_format(2, ',', '.') }} <span class="muted">/ mês</span></dd></div>
+                    {% endif %}
+                    {% if property.iptuAmount is not null %}
+                        <div><dt>IPTU</dt><dd>R$ {{ property.iptuAmount|number_format(2, ',', '.') }} <span class="muted">/ ano</span></dd></div>
+                    {% endif %}
+                </dl>
+            {% endif %}
+            <p class="address-privacy muted">Para sua privacidade e segurança, o endereço exato não é divulgado publicamente. Consulte a imobiliária para mais informações.</p>
+        </section>
+    </div>
+
+    <aside>
+        <section class="card detail-panel contact-card">
+            <h2>Contato da imobiliária</h2>
+            <p><strong>{{ property.agency.name }}</strong><br>{{ property.agency.city }}/{{ property.agency.state }}</p>
+            {% if property.agency.phone %}
+                {% set phoneDigits = property.agency.phone|replace({' ': '', '+': '', '-': '', '(': '', ')': '', '.': ''}) %}
+                <p>Telefone: <a href="tel:{{ phoneDigits }}">{{ property.agency.phone }}</a></p>
+            {% endif %}
+            {% if property.agency.email %}<p>E-mail: <a href="mailto:{{ property.agency.email|e('html_attr') }}">{{ property.agency.email }}</a></p>{% endif %}
+            {% if whatsappNumber %}
+                <form method="post" action="{{ path('property_contact_whatsapp', {id: property.id, slug: property.slug}) }}" target="_blank" rel="noopener noreferrer">
+                    <input type="hidden" name="_token" value="{{ csrf_token('property_contact_whatsapp_' ~ property.id) }}">
+                    <button class="button" type="submit">Conversar pelo WhatsApp</button>
+                </form>
+            {% elseif not property.agency.phone and not property.agency.email %}
+                <p class="muted">Esta imobiliária ainda não disponibilizou um telefone, e-mail ou WhatsApp para contato.</p>
+            {% else %}
+                <p class="muted">O WhatsApp não está disponível para esta imobiliária. Você pode utilizar os outros meios de contato acima.</p>
+            {% endif %}
+            <p class="muted contact-privacy-note">Ao iniciar o contato, você será direcionado ao serviço escolhido. O portal registra cliques de contato para fins operacionais, sem armazenar o conteúdo da conversa.</p>
+        </section>
+    </aside>
+</div>
+
+{% if similarProperties is not empty %}
+    <section class="similar-properties" aria-labelledby="similar-properties-title">
+        <div class="section-heading"><div><h2 id="similar-properties-title">Imóveis semelhantes</h2><p>Outras opções na mesma cidade.</p></div></div>
+        <div class="grid">
+            {% for similar in similarProperties %}
+                <article class="card property-card">
+                    {% if similar.images|length > 0 %}
+                        {% set image = similar.images|first %}
+                        <img class="property-image" src="{{ asset(image.thumbnailPath ?: image.filePath) }}" alt="{{ image.altText ?: similar.title }}" loading="lazy" decoding="async" data-image-fallback>
+                    {% else %}
+                        <div class="property-image image-placeholder" role="img" aria-label="Foto não disponível"><span>Foto não disponível</span></div>
+                    {% endif %}
+                    <div class="property-card-content">
+                        <h3>{{ similar.title }}</h3>
+                        <p class="price">R$ {{ similar.price|number_format(2, ',', '.') }}</p>
+                        <p class="property-location">{{ similar.neighborhood ? similar.neighborhood ~ ' · ' : '' }}{{ similar.city }}/{{ similar.state }}</p>
+                        <p class="property-meta">{{ similar.listingType.label }} · {{ similar.propertyType.label }}</p>
+                        <a class="button property-details-link" href="{{ path('property_show', {id: similar.id, slug: similar.slug}) }}">Ver imóvel</a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
+{% endblock %}
+{% block javascripts %}
+<script>
+document.addEventListener('click', function (event) {
+    const button = event.target.closest('[data-gallery-thumb]');
+    if (!button) return;
+    const image = document.getElementById(button.dataset.galleryTarget);
+    if (!image) return;
+    image.src = button.dataset.gallerySrc;
+    image.alt = button.dataset.galleryAlt || 'Foto do imóvel';
+    image.dataset.fallbackApplied = 'false';
+    image.classList.remove('image-failed');
+    button.parentElement.querySelectorAll('[data-gallery-thumb]').forEach(function (thumb) {
+        const selected = thumb === button;
+        thumb.classList.toggle('is-selected', selected);
+        thumb.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+});
+</script>
+{% endblock %}

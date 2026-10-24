@@ -18,3 +18,7 @@
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+
+# Environment-specific secrets/configuration
+/.env.dev
+/.env.prod.local

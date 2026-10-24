@@ -8,6 +8,6 @@ if (method_exists(Dotenv::class, 'bootEnv')) {
     (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 }
 
-if ($_SERVER['APP_DEBUG']) {
+if (($_SERVER['APP_DEBUG'] ?? false) === true || ($_SERVER['APP_DEBUG'] ?? null) === '1') {
     umask(0000);
 }

@@ -1,0 +1,52 @@
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] run "symfony.exe server:ca:install" first if you want to run the we  [39;49m
+[30;43m b server with TLS support, or use "--p12" or "--no-tls" to avoid th            [39;49m
+[30;43m is warning                                                                     [39;49m
+[30;43m                                                                                [39;49m
+
+Following [32mPHP-CGI[39m log file (C:\Users\vyraf\AppData\Roaming\symfony-cli\log\1d2ec0daf3e64e81cf05bc6858b43f3ceed9ac9d\79ca75f9e90b4126a5955a33ea6a41ec5e854698.log)
+Following [32mWeb Server[39m log file (C:\Users\vyraf\AppData\Roaming\symfony-cli\log\1d2ec0daf3e64e81cf05bc6858b43f3ceed9ac9d.log)
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] The local web server is optimized for local development and MUST ne  [39;49m
+[30;43m ver be used in a production setup.                                             [39;49m
+[30;43m                                                                                [39;49m
+
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] Please note that the Symfony CLI only listens on 127.0.0.1 by defau  [39;49m
+[30;43m lt since version 5.10.3.                                                       [39;49m
+[30;43m           You can use the --allow-all-ip or --listen-ip flags to ch            [39;49m
+[30;43m ange this behavior.                                                            [39;49m
+[30;43m                                                                                [39;49m
+
+[30;42m                                                                                [39;49m
+[30;42m [OK] Web server listening                                                      [39;49m
+[30;42m      The Web server is using PHP CGI 8.2.28                                    [39;49m
+[30;42m      http://127.0.0.1:8000                                                     [39;49m
+[30;42m                                                                                [39;49m
+
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] run "symfony.exe server:ca:install" first if you want to run the we  [39;49m
+[30;43m b server with TLS support, or use "--p12" or "--no-tls" to avoid th            [39;49m
+[30;43m is warning                                                                     [39;49m
+[30;43m                                                                                [39;49m
+
+Following [32mPHP-CGI[39m log file (C:\Users\vyraf\AppData\Roaming\symfony-cli\log\1d2ec0daf3e64e81cf05bc6858b43f3ceed9ac9d\79ca75f9e90b4126a5955a33ea6a41ec5e854698.log)
+Following [32mWeb Server[39m log file (C:\Users\vyraf\AppData\Roaming\symfony-cli\log\1d2ec0daf3e64e81cf05bc6858b43f3ceed9ac9d.log)
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] The local web server is optimized for local development and MUST ne  [39;49m
+[30;43m ver be used in a production setup.                                             [39;49m
+[30;43m                                                                                [39;49m
+
+[30;43m                                                                                [39;49m
+[30;43m [WARNING] Please note that the Symfony CLI only listens on 127.0.0.1 by defau  [39;49m
+[30;43m lt since version 5.10.3.                                                       [39;49m
+[30;43m           You can use the --allow-all-ip or --listen-ip flags to ch            [39;49m
+[30;43m ange this behavior.                                                            [39;49m
+[30;43m                                                                                [39;49m
+
+[30;42m                                                                                [39;49m
+[30;42m [OK] Web server listening                                                      [39;49m
+[30;42m      The Web server is using PHP CGI 8.2.28                                    [39;49m
+[30;42m      http://127.0.0.1:8000                                                     [39;49m
+[30;42m                                                                                [39;49m
+

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+{% block title %}Confirmar e-mail{% endblock %}
+{% block body %}
+<div class="card" style="max-width:520px;margin:auto">
+    <h1>Confirmar alteração de e-mail</h1>
+    <p>Confirme que deseja usar <strong>{{ newEmail }}</strong> como endereço de acesso à sua conta.</p>
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('confirm-email-' ~ token) }}">
+        <button type="submit">Confirmar novo e-mail</button>
+        <a class="button secondary" href="{{ path('app_login') }}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

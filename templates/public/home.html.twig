@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+{% block title %}Imóveis à venda e para alugar na região | Casa & Costa{% endblock %}
+{% block meta_description %}Encontre casas, apartamentos, terrenos e imóveis comerciais para comprar ou alugar. Pesquise por cidade, bairro, finalidade e faixa de preço no Casa & Costa.{% endblock %}
+{% block canonical_url %}{{ url('home') }}{% endblock %}
+{% block og_title %}Encontre seu próximo imóvel | Casa & Costa{% endblock %}
+{% block og_description %}Explore imóveis para venda e aluguel e encontre o espaço ideal para seu próximo capítulo.{% endblock %}
+{% block body %}
+<h1>Um lugar para chamar de seu.</h1>
+<p class="muted home-intro">Explore imóveis selecionados na região e encontre o espaço que combina com o seu momento de vida.</p>
+
+
+<form method="get" class="card search-panel" role="search" aria-label="Buscar imóveis">
+    <details class="filter-disclosure">
+        <summary>Refinar busca <span class="muted">Cidade, finalidade, características, área e preço</span></summary>
+        <div class="form-row filter-fields">
+            <div><label for="filter-city">Cidade</label><input id="filter-city" name="city" value="{{ filters.city }}" maxlength="100" autocomplete="address-level2" aria-invalid="{{ filterErrors.city is defined ? 'true' : 'false' }}"{% if filterErrors.city is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-neighborhood">Bairro</label><input id="filter-neighborhood" name="neighborhood" value="{{ filters.neighborhood }}" maxlength="100" aria-invalid="{{ filterErrors.neighborhood is defined ? 'true' : 'false' }}"{% if filterErrors.neighborhood is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-listing-type">Finalidade</label><select id="filter-listing-type" name="listingType" aria-invalid="{{ filterErrors.listingType is defined ? 'true' : 'false' }}"{% if filterErrors.listingType is defined %} aria-describedby="filter-errors"{% endif %}><option value="">Todas</option><option value="sale" {{ filters.listingType == 'sale' ? 'selected' }}>Venda</option><option value="rent" {{ filters.listingType == 'rent' ? 'selected' }}>Aluguel</option></select></div>
+            <div><label for="filter-property-type">Tipo de imóvel</label><select id="filter-property-type" name="propertyType" aria-invalid="{{ filterErrors.propertyType is defined ? 'true' : 'false' }}"{% if filterErrors.propertyType is defined %} aria-describedby="filter-errors"{% endif %}><option value="">Todos</option>{% for key,label in {'house':'Casa','apartment':'Apartamento','land':'Terreno','commercial':'Comercial','other':'Outro'} %}<option value="{{ key }}" {{ filters.propertyType == key ? 'selected' }}>{{ label }}</option>{% endfor %}</select></div>
+            <div><label for="filter-min-price">Preço mínimo (R$)</label><input id="filter-min-price" type="number" min="0" max="9999999999.99" step="0.01" name="minPrice" value="{{ filters.minPrice }}" inputmode="decimal" aria-invalid="{{ filterErrors.minPrice is defined or filterErrors.priceRange is defined ? 'true' : 'false' }}"{% if filterErrors.minPrice is defined or filterErrors.priceRange is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-max-price">Preço máximo (R$)</label><input id="filter-max-price" type="number" min="0" max="9999999999.99" step="0.01" name="maxPrice" value="{{ filters.maxPrice }}" inputmode="decimal" aria-invalid="{{ filterErrors.maxPrice is defined or filterErrors.priceRange is defined ? 'true' : 'false' }}"{% if filterErrors.maxPrice is defined or filterErrors.priceRange is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-min-area">Área mínima (m²)</label><input id="filter-min-area" type="number" min="0" max="1000000" step="0.01" name="minArea" value="{{ filters.minArea }}" inputmode="decimal" aria-invalid="{{ filterErrors.minArea is defined or filterErrors.areaRange is defined ? 'true' : 'false' }}"{% if filterErrors.minArea is defined or filterErrors.areaRange is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-max-area">Área máxima (m²)</label><input id="filter-max-area" type="number" min="0" max="1000000" step="0.01" name="maxArea" value="{{ filters.maxArea }}" inputmode="decimal" aria-invalid="{{ filterErrors.maxArea is defined or filterErrors.areaRange is defined ? 'true' : 'false' }}"{% if filterErrors.maxArea is defined or filterErrors.areaRange is defined %} aria-describedby="filter-errors"{% endif %}></div>
+            <div><label for="filter-bedrooms">Quartos (mínimo)</label><select id="filter-bedrooms" name="bedrooms" aria-invalid="{{ filterErrors.bedrooms is defined ? 'true' : 'false' }}"{% if filterErrors.bedrooms is defined %} aria-describedby="filter-errors"{% endif %}><option value="">Qualquer quantidade</option>{% for n in 1..10 %}<option value="{{ n }}" {{ filters.bedrooms == (n ~ '') ? 'selected' }}>{{ n }} {{ n == 1 ? 'quarto ou mais' : 'quartos ou mais' }}</option>{% endfor %}<option value="11" {{ filters.bedrooms == '11' ? 'selected' }}>11 ou mais</option><option value="12" {{ filters.bedrooms == '12' ? 'selected' }}>12 ou mais</option><option value="13" {{ filters.bedrooms == '13' ? 'selected' }}>13 ou mais</option><option value="14" {{ filters.bedrooms == '14' ? 'selected' }}>14 ou mais</option><option value="15" {{ filters.bedrooms == '15' ? 'selected' }}>15 ou mais</option><option value="16" {{ filters.bedrooms == '16' ? 'selected' }}>16 ou mais</option><option value="17" {{ filters.bedrooms == '17' ? 'selected' }}>17 ou mais</option><option value="18" {{ filters.bedrooms == '18' ? 'selected' }}>18 ou mais</option><option value="19" {{ filters.bedrooms == '19' ? 'selected' }}>19 ou mais</option><option value="20" {{ filters.bedrooms == '20' ? 'selected' }}>20 ou mais</option></select></div>
+            <div><label for="filter-bathrooms">Banheiros (mínimo)</label><select id="filter-bathrooms" name="bathrooms" aria-invalid="{{ filterErrors.bathrooms is defined ? 'true' : 'false' }}"{% if filterErrors.bathrooms is defined %} aria-describedby="filter-errors"{% endif %}><option value="">Qualquer quantidade</option>{% for n in 1..10 %}<option value="{{ n }}" {{ filters.bathrooms == (n ~ '') ? 'selected' }}>{{ n }} {{ n == 1 ? 'banheiro ou mais' : 'banheiros ou mais' }}</option>{% endfor %}<option value="11" {{ filters.bathrooms == '11' ? 'selected' }}>11 ou mais</option><option value="12" {{ filters.bathrooms == '12' ? 'selected' }}>12 ou mais</option><option value="13" {{ filters.bathrooms == '13' ? 'selected' }}>13 ou mais</option><option value="14" {{ filters.bathrooms == '14' ? 'selected' }}>14 ou mais</option><option value="15" {{ filters.bathrooms == '15' ? 'selected' }}>15 ou mais</option><option value="16" {{ filters.bathrooms == '16' ? 'selected' }}>16 ou mais</option><option value="17" {{ filters.bathrooms == '17' ? 'selected' }}>17 ou mais</option><option value="18" {{ filters.bathrooms == '18' ? 'selected' }}>18 ou mais</option><option value="19" {{ filters.bathrooms == '19' ? 'selected' }}>19 ou mais</option><option value="20" {{ filters.bathrooms == '20' ? 'selected' }}>20 ou mais</option></select></div>
+            <div><label for="filter-parking">Vagas (mínimo)</label><select id="filter-parking" name="parkingSpaces" aria-invalid="{{ filterErrors.parkingSpaces is defined ? 'true' : 'false' }}"{% if filterErrors.parkingSpaces is defined %} aria-describedby="filter-errors"{% endif %}><option value="">Qualquer quantidade</option>{% for n in 1..10 %}<option value="{{ n }}" {{ filters.parkingSpaces == (n ~ '') ? 'selected' }}>{{ n }} {{ n == 1 ? 'vaga ou mais' : 'vagas ou mais' }}</option>{% endfor %}<option value="11" {{ filters.parkingSpaces == '11' ? 'selected' }}>11 ou mais</option><option value="12" {{ filters.parkingSpaces == '12' ? 'selected' }}>12 ou mais</option><option value="13" {{ filters.parkingSpaces == '13' ? 'selected' }}>13 ou mais</option><option value="14" {{ filters.parkingSpaces == '14' ? 'selected' }}>14 ou mais</option><option value="15" {{ filters.parkingSpaces == '15' ? 'selected' }}>15 ou mais</option><option value="16" {{ filters.parkingSpaces == '16' ? 'selected' }}>16 ou mais</option><option value="17" {{ filters.parkingSpaces == '17' ? 'selected' }}>17 ou mais</option><option value="18" {{ filters.parkingSpaces == '18' ? 'selected' }}>18 ou mais</option><option value="19" {{ filters.parkingSpaces == '19' ? 'selected' }}>19 ou mais</option><option value="20" {{ filters.parkingSpaces == '20' ? 'selected' }}>20 ou mais</option></select></div>
+        </div>
+        {% if filterErrors is not empty %}<div class="filter-errors" id="filter-errors" role="alert" aria-live="assertive"><strong>Revise os filtros:</strong><ul>{% for error in filterErrors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <div class="search-actions"><button type="submit">Buscar imóveis</button> <a class="button secondary" href="{{ path('home') }}">Limpar todos os filtros</a></div>
+    </details>
+</form>
+{% if featuredHighlights is not empty %}
+<section class="featured-section" aria-labelledby="featured-heading">
+    <div class="section-heading"><div><span class="eyebrow">Seleção Casa &amp; Costa</span><h2 id="featured-heading">Imóveis em destaque</h2></div><p class="muted">Uma seleção editorial de anúncios aprovados e disponíveis.</p></div>
+    <div class="grid property-grid">
+        {% for highlight in featuredHighlights %}
+            {% set property = highlight.property %}
+            <article class="card property-card featured-property-card">
+                {% set cover = property.images|first %}
+                {% if cover %}
+                    <img class="property-image" src="{{ asset(cover.thumbnailPath ?: cover.filePath) }}" alt="{{ cover.altText ?: property.title }}" loading="lazy" decoding="async" data-image-fallback>
+                {% else %}
+                    <div class="property-image image-placeholder" role="img" aria-label="Foto não disponível"><span>Foto não disponível</span></div>
+                {% endif %}
+                <div class="property-card-content">
+                    <p class="eyebrow featured-label">Em destaque</p>
+                    <p class="property-location">{{ property.neighborhood ? property.neighborhood ~ ' · ' : '' }}{{ property.city }}/{{ property.state }}</p>
+                    <h3><a href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a></h3>
+                    <p class="price">R$ {{ property.price|number_format(2, ',', '.') }}</p>
+                    <p class="property-meta">{{ property.listingType.label }} · {{ property.propertyType.label }}</p>
+                    <a class="button property-details-link" href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">Ver detalhes</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% set activeFilters = [] %}
+{% if filters.city != '' %}{% set activeFilters = activeFilters|merge([{key:'city', label:'Cidade: ' ~ filters.city}]) %}{% endif %}
+{% if filters.neighborhood != '' %}{% set activeFilters = activeFilters|merge([{key:'neighborhood', label:'Bairro: ' ~ filters.neighborhood}]) %}{% endif %}
+{% if filters.listingType != '' %}{% set activeFilters = activeFilters|merge([{key:'listingType', label:filters.listingType == 'sale' ? 'Venda' : 'Aluguel'}]) %}{% endif %}
+{% if filters.propertyType != '' %}{% set activeFilters = activeFilters|merge([{key:'propertyType', label:({'house':'Casa','apartment':'Apartamento','land':'Terreno','commercial':'Comercial','other':'Outro'})[filters.propertyType] ?? filters.propertyType}]) %}{% endif %}
+{% if filters.minPrice != '' %}{% set activeFilters = activeFilters|merge([{key:'minPrice', label:'A partir de R$ ' ~ filters.minPrice|number_format(2, ',', '.')}]) %}{% endif %}
+{% if filters.maxPrice != '' %}{% set activeFilters = activeFilters|merge([{key:'maxPrice', label:'Até R$ ' ~ filters.maxPrice|number_format(2, ',', '.')}]) %}{% endif %}
+{% if filters.minArea != '' %}{% set activeFilters = activeFilters|merge([{key:'minArea', label:'A partir de ' ~ filters.minArea|number_format(2, ',', '.') ~ ' m²'}]) %}{% endif %}
+{% if filters.maxArea != '' %}{% set activeFilters = activeFilters|merge([{key:'maxArea', label:'Até ' ~ filters.maxArea|number_format(2, ',', '.') ~ ' m²'}]) %}{% endif %}
+{% if filters.bedrooms != '' %}{% set activeFilters = activeFilters|merge([{key:'bedrooms', label:filters.bedrooms ~ '+ quartos'}]) %}{% endif %}
+{% if filters.bathrooms != '' %}{% set activeFilters = activeFilters|merge([{key:'bathrooms', label:filters.bathrooms ~ '+ banheiros'}]) %}{% endif %}
+{% if filters.parkingSpaces != '' %}{% set activeFilters = activeFilters|merge([{key:'parkingSpaces', label:filters.parkingSpaces ~ '+ vagas'}]) %}{% endif %}
+{% if activeFilters is not empty %}<div class="active-filters" aria-label="Filtros ativos"><span class="active-filters-label">Filtros aplicados:</span>{% for filter in activeFilters %}<a class="filter-chip" href="{{ path('home', filters|merge({(filter.key): '', sort: sort, page: 1})) }}" aria-label="Remover filtro {{ filter.label }}">{{ filter.label }} <span aria-hidden="true">×</span></a>{% endfor %}<a class="clear-filters-link" href="{{ path('home') }}">Limpar todos</a></div>{% endif %}
+<div class="section-heading listing-heading">
+    <div><span class="eyebrow">Seleção especial</span><h2>Imóveis publicados</h2><p class="muted results-count">{{ total }} {{ total == 1 ? 'imóvel encontrado' : 'imóveis encontrados' }}</p></div>
+    <div class="sort-control"><label for="sort-properties" style="width: 100%">Ordenar por</label><select id="sort-properties" name="sort" form="sort-form" aria-label="Ordenar imóveis" onchange="document.getElementById('sort-form').requestSubmit()"><option value="recent" {{ sort == 'recent' ? 'selected' }}>Mais recentes</option><option value="price_asc" {{ sort == 'price_asc' ? 'selected' }}>Menor preço</option><option value="price_desc" {{ sort == 'price_desc' ? 'selected' }}>Maior preço</option></select></div>
+</div>
+<form id="sort-form" method="get" class="visually-hidden" aria-hidden="true">
+    {% for key,value in filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+    <input type="hidden" name="page" value="1">
+</form>
+{% if properties is not empty %}
+    <div class="grid property-grid">
+        {% for property in properties %}
+            <article class="card property-card">
+                {% set cover = property.images|first %}
+                {% if cover %}
+                    <img class="property-image" src="{{ asset(cover.thumbnailPath ?: cover.filePath) }}" alt="{{ cover.altText ?: property.title }}" loading="lazy" decoding="async" data-image-fallback>
+                {% else %}
+                    <div class="property-image image-placeholder" role="img" aria-label="Foto não disponível"><span>Foto não disponível</span></div>
+                {% endif %}
+                <div class="property-card-content">
+                    <p class="property-location">{{ property.neighborhood ? property.neighborhood ~ ' · ' : '' }}{{ property.city }}/{{ property.state }}</p>
+                    <h3><a href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">{{ property.title }}</a></h3>
+                    <p class="price">R$ {{ property.price|number_format(2, ',', '.') }}</p>
+                    <p class="property-meta">{{ property.listingType.label }} · {{ property.propertyType.label }}</p>
+                    <a class="button property-details-link" href="{{ path('property_show', {id: property.id, slug: property.slug}) }}">Ver detalhes</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+    {% if pageCount > 1 %}
+        <nav class="pagination" aria-label="Paginação de imóveis">
+            {% if page > 1 %}<a class="button secondary" href="{{ path('home', filters|merge({sort: sort, page: page - 1})) }}" rel="prev">← Anterior</a>{% else %}<span class="button secondary pagination-disabled" aria-disabled="true">← Anterior</span>{% endif %}
+            <span class="pagination-status">Página <strong>{{ page }}</strong> de <strong>{{ pageCount }}</strong></span>
+            {% if page < pageCount %}<a class="button secondary" href="{{ path('home', filters|merge({sort: sort, page: page + 1})) }}" rel="next">Próxima →</a>{% else %}<span class="button secondary pagination-disabled" aria-disabled="true">Próxima →</span>{% endif %}
+        </nav>
+    {% endif %}
+{% else %}
+    <section class="card empty-state search-empty" aria-live="polite">
+        <span class="eyebrow">Nenhum resultado</span>
+        <h2>Não encontramos imóveis com esses filtros.</h2>
+        <p>Experimente mudar a cidade, o bairro ou a faixa de preço. Você também pode limpar os filtros e explorar todos os anúncios disponíveis.</p>
+        <a class="button" href="{{ path('home') }}">Ver todos os imóveis</a>
+    </section>
+{% endif %}
+{% endblock %}

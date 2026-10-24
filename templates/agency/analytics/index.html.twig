@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+{% block title %}Métricas da imobiliária{% endblock %}
+{% block body %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Desempenho do portfólio</span>
+        <h1>Métricas</h1>
+        <p class="muted">Acompanhe as visualizações e os cliques de contato registrados para seus imóveis.</p>
+    </div>
+    <a class="button secondary" href="{{ path('agency_analytics_index', {from: fromDate, to: toDate, export: 1}) }}">Exportar CSV</a>
+</div>
+
+<form method="get" class="card" aria-label="Filtrar métricas por período">
+    <div class="form-row">
+        <div><label for="analytics-from">Data inicial</label><input id="analytics-from" type="date" name="from" value="{{ fromDate }}" required></div>
+        <div><label for="analytics-to">Data final</label><input id="analytics-to" type="date" name="to" value="{{ toDate }}" required></div>
+        <div class="form-actions"><button type="submit">Aplicar período</button></div>
+    </div>
+    <p class="muted">O período inclui as duas datas informadas. A consulta permite até 366 dias.</p>
+</form>
+
+<div class="grid metrics-grid" aria-label="Resumo de métricas">
+    <article class="card metric-card"><span class="muted">Visualizações</span><strong>{{ summary.views }}</strong><small>Visualizações de páginas de imóveis, deduplicadas por sessão em 30 minutos.</small></article>
+    <article class="card metric-card"><span class="muted">Cliques de contato</span><strong>{{ summary.contacts }}</strong><small>Cliques no botão de WhatsApp que passaram pelo portal.</small></article>
+    <article class="card metric-card"><span class="muted">WhatsApp</span><strong>{{ summary.whatsapp }}</strong><small>Incluído nos cliques de contato.</small></article>
+    <article class="card metric-card"><span class="muted">Anúncios cadastrados</span><strong>{{ totalProperties }}</strong><small>Quantidade atual, independentemente do período selecionado.</small></article>
+</div>
+
+<section class="section-block">
+    <div class="section-heading"><div><span class="eyebrow">Inventário</span><h2>Anúncios por status atual</h2></div></div>
+    <div class="table-wrap" role="region" aria-label="Anúncios por status" tabindex="0">
+        <table><thead><tr><th>Status</th><th>Quantidade</th></tr></thead><tbody>
+        {% for status, count in statusCounts %}
+            <tr><td>{{ status|replace({'_':' '})|title }}</td><td>{{ count }}</td></tr>
+        {% else %}
+            <tr><td colspan="2">Nenhum anúncio cadastrado.</td></tr>
+        {% endfor %}
+        </tbody></table>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="section-heading"><div><span class="eyebrow">Desempenho por imóvel</span><h2>Visualizações e contatos</h2></div></div>
+    <div class="table-wrap" role="region" aria-label="Métricas por imóvel" tabindex="0">
+        <table><thead><tr><th>Imóvel</th><th>Visualizações</th><th>Cliques de contato</th></tr></thead><tbody>
+        {% for row in propertyRows %}
+            <tr><td>{{ row.title }}</td><td>{{ row.views }}</td><td>{{ row.contacts }}</td></tr>
+        {% else %}
+            <tr><td colspan="3">Ainda não há eventos registrados no período selecionado.</td></tr>
+        {% endfor %}
+        </tbody></table>
+    </div>
+</section>
+
+<aside class="card">
+    <h2>Como interpretar os números</h2>
+    <ul>
+        <li>Uma visualização é registrada quando a página pública de um imóvel é aberta. A mesma sessão é contada no máximo uma vez por imóvel a cada 30 minutos.</li>
+        <li>Um clique de contato representa o envio do formulário do botão de WhatsApp. O portal não sabe se a pessoa enviou uma mensagem depois de abrir o WhatsApp.</li>
+        <li>Cliques diretos em telefone e e-mail ainda não são medidos e não entram nesses totais.</li>
+        <li>Os eventos não armazenam IP, nome, e-mail, conteúdo de conversa nem identificador de visitante. A deduplicação usa a sessão do navegador.</li>
+        <li>Os anúncios por status refletem o estado atual e não são históricos do período selecionado.</li>
+    </ul>
+</aside>
+{% endblock %}

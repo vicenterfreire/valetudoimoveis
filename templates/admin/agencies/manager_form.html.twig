@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block title %}Cadastrar gestor — {{ agency.name }}{% endblock %}
+{% block body %}
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Administração do portal</span>
+        <h1>Cadastrar primeiro gestor</h1>
+        <p class="muted">Imobiliária: <strong>{{ agency.name }}</strong>. Defina uma senha inicial e compartilhe as credenciais diretamente com o gestor por um canal seguro. A conta não poderá entrar no painel enquanto a imobiliária estiver pendente, rejeitada ou bloqueada.</p>
+    </div>
+</div>
+<div class="card">
+    {% if errors is not empty %}
+        <div class="flash flash-error" role="alert"><strong>Revise os dados:</strong><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>
+    {% endif %}
+    <form method="post" action="{{ path('admin_agency_manager_new', {id: agency.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('create-agency-manager-' ~ agency.id) }}">
+        <div class="form-row">
+            <div class="field">
+                <label for="manager-full-name">Nome completo</label>
+                <input id="manager-full-name" name="full_name" value="{{ fullName }}" maxlength="150" autocomplete="name" required>
+            </div>
+            <div class="field">
+                <label for="manager-email">E-mail do gestor</label>
+                <input id="manager-email" name="email" type="email" value="{{ email }}" maxlength="180" autocomplete="email" required>
+            </div>
+            <div class="field">
+                <label for="manager-password">Senha inicial</label>
+                <input id="manager-password" name="password" type="password" minlength="12" maxlength="4096" autocomplete="new-password" required>
+                <small class="muted">Use pelo menos 12 caracteres. Prefira uma senha exclusiva para esta conta.</small>
+            </div>
+            <div class="field">
+                <label for="manager-password-confirmation">Confirmar senha inicial</label>
+                <input id="manager-password-confirmation" name="password_confirmation" type="password" minlength="12" maxlength="4096" autocomplete="new-password" required>
+            </div>
+        </div>
+        <p class="muted">A senha é armazenada somente como hash. Por segurança, entregue a senha inicial manualmente por um canal confiável e oriente o gestor a alterá-la após o primeiro acesso.</p>
+        <div class="actions"><button type="submit">Cadastrar primeiro gestor</button><a class="button secondary" href="{{ path('admin_agencies_index') }}">Cancelar</a></div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Relatórios de utilização | Casa & Costa{% endblock %}
+{% block body %}
+<div class="page-heading"><div><span class="eyebrow">Administração global</span><h1>Relatórios de utilização</h1><p class="muted">Indicadores agregados de operação, anúncios e interações do catálogo.</p></div><a class="button secondary" href="{{ path('admin_usage_reports_index', {from: fromDate, to: toDate, agency: selectedAgency, export: 1}) }}">Exportar CSV</a></div>
+<form method="get" class="toolbar" aria-label="Filtros dos relatórios">
+    <div class="field"><label for="report-from">Data inicial</label><input id="report-from" type="date" name="from" value="{{ fromDate }}" required></div>
+    <div class="field"><label for="report-to">Data final</label><input id="report-to" type="date" name="to" value="{{ toDate }}" required></div>
+    <div class="field"><label for="report-agency">Imobiliária (métricas de usuários, imóveis e evolução)</label><select id="report-agency" name="agency"><option value="">Todas as imobiliárias</option>{% for agency in agencies %}<option value="{{ agency.id }}" {{ selectedAgency == agency.id ? 'selected' : '' }}>{{ agency.name }}{% if agency.status != 'active' %} — {{ agency.status == 'pending' ? 'Pendente' : (agency.status == 'blocked' ? 'Bloqueada' : 'Rejeitada') }}{% endif %}</option>{% endfor %}</select></div>
+    <button type="submit">Aplicar filtros</button><a class="button secondary" href="{{ path('admin_usage_reports_index') }}">Limpar</a>
+</form>
+<p class="muted">As contagens de imobiliárias representam o total global e não são alteradas pelo filtro. As demais métricas respeitam a imobiliária selecionada. O período é inclusivo e limitado a 366 dias.</p>
+<section class="section-block"><div class="section-heading"><div><h2>Imobiliárias</h2><p>Estado atual das contas cadastradas</p></div></div><div class="metrics-grid">
+    <article class="metric-card"><span>Ativas</span><strong>{{ overview.agencies_active }}</strong></article>
+    <article class="metric-card"><span>Pendentes</span><strong>{{ overview.agencies_pending }}</strong></article>
+    <article class="metric-card"><span>Bloqueadas</span><strong>{{ overview.agencies_blocked }}</strong></article>
+</div></section>
+<section class="section-block"><div class="section-heading"><div><h2>Usuários</h2><p>Contas vinculadas ao filtro selecionado</p></div></div><div class="metrics-grid">
+    <article class="metric-card"><span>Total de usuários</span><strong>{{ overview.users_total }}</strong></article>
+    <article class="metric-card"><span>Ativos</span><strong>{{ overview.users_active }}</strong></article>
+    <article class="metric-card"><span>Desativados</span><strong>{{ overview.users_inactive }}</strong></article>
+</div></section>
+<section class="section-block"><div class="section-heading"><div><h2>Imóveis por status</h2><p>Estado atual dos anúncios vinculados ao filtro</p></div></div><div class="metrics-grid">
+    <article class="metric-card"><span>Rascunhos</span><strong>{{ overview.properties_draft }}</strong></article>
+    <article class="metric-card"><span>Publicados</span><strong>{{ overview.properties_published }}</strong></article>
+    <article class="metric-card"><span>Pausados</span><strong>{{ overview.properties_paused }}</strong></article>
+    <article class="metric-card"><span>Vendidos</span><strong>{{ overview.properties_sold }}</strong></article>
+    <article class="metric-card"><span>Alugados</span><strong>{{ overview.properties_rented }}</strong></article>
+    <article class="metric-card"><span>Arquivados</span><strong>{{ overview.properties_archived }}</strong></article>
+</div></section>
+<section class="section-block"><div class="section-heading"><div><h2>Moderação</h2><p>Estado atual da revisão dos anúncios</p></div></div><div class="metrics-grid">
+    <article class="metric-card"><span>Pendentes</span><strong>{{ overview.moderation_pending }}</strong></article>
+    <article class="metric-card"><span>Aprovados</span><strong>{{ overview.moderation_approved }}</strong></article>
+    <article class="metric-card"><span>Reprovados</span><strong>{{ overview.moderation_rejected }}</strong></article>
+    <article class="metric-card"><span>Ajustes solicitados</span><strong>{{ overview.moderation_changes_requested }}</strong></article>
+</div></section>
+<section class="section-block"><div class="section-heading"><div><h2>Evolução de anúncios</h2><p>Quantidade de imóveis criados por mês dentro do período</p></div></div><div class="table-wrap"><table><thead><tr><th>Mês</th><th>Anúncios cadastrados</th></tr></thead><tbody>{% for row in listingTrend %}<tr><td>{{ row.month|date('m/Y') }}</td><td>{{ row.total }}</td></tr>{% else %}<tr><td colspan="2">Nenhum anúncio cadastrado no período.</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="section-block"><div class="section-heading"><div><h2>Visualizações e contatos</h2><p>Eventos agregados por mês; uma sessão registra no máximo um evento do mesmo tipo por imóvel/canal a cada 30 minutos.</p></div></div><div class="table-wrap"><table><thead><tr><th>Mês</th><th>Visualizações</th><th>Cliques de contato</th></tr></thead><tbody>{% for row in contactTrend %}<tr><td>{{ row.month|date('m/Y') }}</td><td>{{ row.views }}</td><td>{{ row.contacts }}</td></tr>{% else %}<tr><td colspan="3">Nenhum evento registrado no período.</td></tr>{% endfor %}</tbody></table></div></section>
+<section class="section-block"><div class="card"><h2>Retenção de eventos</h2><p>O sistema possui um comando de manutenção com retenção padrão de {{ retentionDays }} dias para eventos analíticos. Os eventos armazenam apenas imobiliária, imóvel, tipo/canal e data; não guardam IP, e-mail ou identificador pessoal do visitante.</p><p class="muted">Em hospedagem FTP, a execução periódica do comando precisa ser configurada manualmente se houver suporte a tarefas agendadas. A exportação contém dados agregados e é restrita a administradores globais.</p></div></section>
+{% endblock %}

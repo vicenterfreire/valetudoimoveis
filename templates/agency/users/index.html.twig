@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+{% block title %}Equipe{% endblock %}
+{% block body %}
+<div class="page-heading"><div><span class="eyebrow">Pessoas e permissões</span><h1>Equipe</h1><p class="muted">Gerencie os acessos de quem trabalha com os imóveis da sua imobiliária.</p></div><a class="button" href="{{ path('agency_users_new') }}">Adicionar funcionário</a></div>
+<p class="muted">Você pode editar os dados, redefinir a senha ou desativar/reativar o acesso de funcionários da sua imobiliária.</p>
+<div class="table-wrap" role="region" aria-label="Tabela de funcionários da imobiliária. Em telas estreitas, deslize horizontalmente para ver todas as colunas." tabindex="0"><table>
+    <thead><tr><th>Nome</th><th>E-mail</th><th>Ativo</th><th>Ações</th></tr></thead>
+    <tbody>
+    {% for member in members %}
+        <tr>
+            <td>{{ member.fullName }}</td><td>{{ member.email }}</td><td>{{ member.isActive ? 'Sim' : 'Não' }}</td>
+            <td><div class="actions">
+                {% if not member.isAgencyManager and not member.isGlobalAdmin and member.id != app.user.id %}
+                    <a href="{{ path('agency_users_edit', {id: member.id}) }}">Editar</a>
+                    <form class="inline" method="post" action="{{ path('agency_users_status', {id: member.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('agency-user-status-' ~ member.id) }}">
+                        <button class="{{ member.isActive ? 'danger' : '' }}">{{ member.isActive ? 'Desativar' : 'Reativar' }}</button>
+                    </form>
+                {% else %}<span class="muted">Conta de gestão</span>{% endif %}
+            </div></td>
+        </tr>
+    {% else %}<tr><td colspan="4">Nenhum funcionário cadastrado.</td></tr>{% endfor %}
+    </tbody>
+</table></div>
+{% endblock %}

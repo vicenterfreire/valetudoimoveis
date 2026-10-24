@@ -1,0 +1,23 @@
+# Symfony front controller — requer Apache com mod_rewrite e AllowOverride habilitado.
+DirectoryIndex index.php
+RewriteEngine On
+
+# Não expor arquivos ocultos (exceto o desafio ACME, se usado pelo provedor).
+RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
+
+# Bloquear arquivos sensíveis caso sejam copiados acidentalmente para public/.
+<FilesMatch "(?i)^(\.env.*|composer\.(json|lock)|symfony\.lock|phpunit.*|.*\.(log|sql|sqlite|bak|dist|ya?ml|md))$">
+    Require all denied
+</FilesMatch>
+
+# Nunca servir o front controller como arquivo-fonte; as demais rotas vão para index.php.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>

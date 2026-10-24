@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ heading }}{% endblock %}
+{% block body %}
+<h1>{{ heading }}</h1>
+<div class="card" style="max-width:650px">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.fullName) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword) }}
+    <button>Salvar funcionário</button>
+    <a class="button secondary" href="{{ path('agency_users_index') }}">Cancelar</a>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
